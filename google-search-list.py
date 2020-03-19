@@ -11,26 +11,23 @@ FILEIN = "" #ENTER INPUT FILE NAME HERE
 # out file
 FILEOUT = "" #ENTER OUTPUT FILE NAME HERE
 # number of rows to search
-numToQuery = 2
+numToQuery = 50
 
-out = {}
+out = []
 cnt = 0
 # open and iterate over csv
+# start standard
 with open(FILEIN) as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
+    # end standard
         
         if cnt >= numToQuery:
             break
-        out[cnt] = []
+        out.append([])
 
         # build query string
         query = row[0].replace(" ","+") + "+" + row[1] + "+" + row[2]
-
-        # add to outbound csv
-        out[cnt].append(row[0])
-        out[cnt].append(row[1])
-        out[cnt].append(row[2])
 
         # perform query
         print("Searching for... ",row[0])
@@ -39,27 +36,36 @@ with open(FILEIN) as csvfile:
             'cx': ENGINE,
             'q': query
         }
+        #standard
         r = requests.get("https://www.googleapis.com/customsearch/v1?",params=p)
+        #end standard
 
         #deserialize
+        #standard
         data = json.loads(r.text)
+        #end standard
         item = data['items'][0]
 
         print("\t",item['title'])
         print("\t",item['link'].replace("\n",""))
 
-        # add search results to outbound csv
+        # add to outbound csv
+        out[cnt].append(row[0])
+        out[cnt].append(row[1])
+        out[cnt].append(row[2])
         out[cnt].append(item['title'])
         out[cnt].append(item['link'])
 
         cnt = cnt+1
 
 # write out csv file
+# standard
 with open(FILEOUT, 'w', newline="") as csvfile:
     writer = csv.writer(csvfile)
-    for rowNum in out:
-        print(rowNum)
-        row = out[rowNum]
+    # end standard
+    for row in out:
+        # standard
         writer.writerow(row)
+        # end standard
     
 input()
