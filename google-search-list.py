@@ -47,7 +47,7 @@ with open(FILEIN) as csvfile:
         item = data['items'][0]
 
         print("\t",item['title'])
-        print("\t",item['link'].replace("\n",""))
+        print("\t",item['link'])
 
         # add to outbound csv
         out[cnt].append(row[0])
